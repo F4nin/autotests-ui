@@ -1,5 +1,9 @@
+import pytest
 from playwright.sync_api import sync_playwright, expect
 
+@pytest.mark.ui
+@pytest.mark.regression
+@pytest.mark.authorization
 def test_authorization():
 
     with sync_playwright() as playwright:
