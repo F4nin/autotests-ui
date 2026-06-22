@@ -1,4 +1,3 @@
-from authorization import wrong_email_or_password_alert
 from pages.base_page import BasePage
 from playwright.sync_api import Page, expect
 
