@@ -8,8 +8,16 @@ from pages.create_course_page import CreateCoursePage
 @pytest.mark.ui
 @pytest.mark.regression
 @pytest.mark.courses
-def test_empty_courses_list(chromium_page_with_state: Page):
-    pass
+def test_empty_courses_list(courses_page: CoursesListPage):
+    courses_page.visit("https://nikita-filonov.github.io/qa-automation-engineer-ui-course/#/courses")
+
+    courses_page.navbar.check_visible('username')
+    courses_page.sidebar.check_visible()
+
+    courses_page.check_visible_courses_title()
+    courses_page.check_courses_button()
+    courses_page.check_visible_empty_view()
+
 
 @pytest.mark.courses
 @pytest.mark.regression
@@ -20,7 +28,7 @@ def test_empty_courses_list(chromium_page_with_state: Page):
          ("Playwright Advanced", "4 weeks", "Advanced Playwright course", "100", "40"),
      ]
 )
-def test_create_course(courses_page: CoursesListPage,create_course_page: CreateCoursePage, title, estimated_time, description, max_score, min_score):
+def test_create_course(courses_page: CoursesListPage, create_course_page: CreateCoursePage, title, estimated_time, description, max_score, min_score):
     create_course_page.visit('https://nikita-filonov.github.io/qa-automation-engineer-ui-course/#/courses/create')
     create_course_page.check_visible_create_course_title()
     create_course_page.check_disabled_create_course_button()
