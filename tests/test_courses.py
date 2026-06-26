@@ -1,6 +1,4 @@
 import pytest
-from playwright.sync_api import sync_playwright, expect, Page
-
 from pages.courses_list_page import CoursesListPage
 from pages.create_course_page import CreateCoursePage
 
@@ -14,8 +12,7 @@ def test_empty_courses_list(courses_page: CoursesListPage):
     courses_page.navbar.check_visible('username')
     courses_page.sidebar.check_visible()
 
-    courses_page.check_visible_courses_title()
-    courses_page.check_courses_button()
+    courses_page.toolbar_view.check_visible()
     courses_page.check_visible_empty_view()
 
 
@@ -54,8 +51,7 @@ def test_create_course(courses_page: CoursesListPage, create_course_page: Create
         min_score=min_score
     )
     create_course_page.click_create_course_button()
-    courses_page.check_visible_courses_title()
-    courses_page.check_courses_button()
+    courses_page.toolbar_view.check_visible()
     courses_page.course_view.check_visible(
         index=0,
         title=title,
