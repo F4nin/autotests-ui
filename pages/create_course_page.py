@@ -1,5 +1,7 @@
 from playwright.sync_api import Page, expect
 
+from components.navigation.navbar_component import NavbarComponent
+from components.views.empty_view_component import EmptyViewComponent
 from pages.base_page import BasePage
 
 
@@ -7,15 +9,16 @@ class CreateCoursePage(BasePage):
     def __init__(self, page: Page):
         super().__init__(page)
 
+        self.navbar = NavbarComponent(page)
+        self.preview_empty_view = EmptyViewComponent(page, 'create-course-preview')
+        self.exercises_empty_view = EmptyViewComponent(page, 'create-course-exercises')
+
         # Заголовок и кнопка создания курса
         self.create_course_title = page.get_by_test_id('create-course-toolbar-title-text')
         self.create_course_button = page.get_by_test_id('create-course-toolbar-create-course-button')
 
         # Картинка предпросмотра и блок предпросмотра картинки курса
         self.preview_image = page.get_by_test_id('create-course-preview-image-upload-widget-preview-image')
-        self.preview_empty_view_icon = page.get_by_test_id('create-course-preview-empty-view-icon')
-        self.preview_empty_view_title = page.get_by_test_id('create-course-preview-empty-view-title-text')
-        self.preview_empty_view_description = page.get_by_test_id('create-course-preview-empty-view-description-text')
 
         # Кнопка загрузки, удаления картинки предпросмотра курса и блок с информацией о загружаемой картинке
         self.preview_image_upload_icon = page.get_by_test_id('create-course-preview-image-upload-widget-info-icon')
@@ -49,12 +52,6 @@ class CreateCoursePage(BasePage):
         self.exercises_title = page.get_by_test_id('create-course-exercises-box-toolbar-title-text')
         self.create_exercise_button = page.get_by_test_id('create-course-exercises-box-toolbar-create-exercise-button')
 
-        # Блок, который отображется, когда в курсе нет заданий
-        self.exercises_empty_view_icon = page.get_by_test_id('create-course-exercises-empty-view-icon')
-        self.exercises_empty_view_title = page.get_by_test_id('create-course-exercises-empty-view-title-text')
-        self.exercises_empty_view_description = page.get_by_test_id(
-            'create-course-exercises-empty-view-description-text'
-        )
 
     def check_visible_create_course_title(self):
         expect(self.create_course_title).to_be_visible()
@@ -70,16 +67,11 @@ class CreateCoursePage(BasePage):
         expect(self.create_course_button).to_be_disabled()
 
     def check_visible_image_preview_empty_view(self):
-        expect(self.preview_empty_view_icon).to_be_visible()
+        self.preview_empty_view.check_visible(
+            title='No image selected',
+            description='Preview of selected image will be displayed here'
 
-        expect(self.preview_empty_view_title).to_be_visible()
-        expect(self.preview_empty_view_title).to_have_text('No image selected')
-
-        expect(self.preview_empty_view_description).to_be_visible()
-        expect(self.preview_empty_view_description).to_have_text(
-            'Preview of selected image will be displayed here'
         )
-
     def check_visible_image_upload_view(self, is_image_uploaded: bool = False):
         expect(self.preview_image_upload_icon).to_be_visible()
 
@@ -162,14 +154,9 @@ class CreateCoursePage(BasePage):
         self.create_exercise_button.click()
 
     def check_visible_exercises_empty_view(self):
-        expect(self.exercises_empty_view_icon).to_be_visible()
-
-        expect(self.exercises_empty_view_title).to_be_visible()
-        expect(self.exercises_empty_view_title).to_have_text('There is no exercises')
-
-        expect(self.exercises_empty_view_description).to_be_visible()
-        expect(self.exercises_empty_view_description).to_have_text(
-            'Click on "Create exercise" button to create new exercise'
+        self.exercises_empty_view.check_visible(
+            title='There is no exercises',
+            description='Click on "Create exercise" button to create new exercise'
         )
 
     def click_delete_exercise_button(self, index: int):

@@ -56,7 +56,7 @@ def test_create_course(courses_page: CoursesListPage, create_course_page: Create
     create_course_page.click_create_course_button()
     courses_page.check_visible_courses_title()
     courses_page.check_courses_button()
-    courses_page.check_visible_course_card(
+    courses_page.course_view.check_visible(
         index=0,
         title=title,
         estimated_time=estimated_time,
