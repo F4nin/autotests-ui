@@ -1,7 +1,6 @@
 import pytest
-from playwright.sync_api import sync_playwright, expect, Page
 
-from pages.dashboard_page import DashboardPage
+from pages.dashboards.dashboard_page import DashboardPage
 
 @pytest.mark.dashboard
 def test_dashboard_displaying(dashboard_page_with_state: DashboardPage):

@@ -1,6 +1,6 @@
 import pytest
-from pages.dashboard_page import DashboardPage
-from pages.registration_page import RegistrationPage
+from pages.dashboards.dashboard_page import DashboardPage
+from pages.authentication.registration_page import RegistrationPage
 
 @pytest.mark.ui
 @pytest.mark.regression
