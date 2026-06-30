@@ -1,6 +1,7 @@
 import pytest
 from playwright.sync_api import Page
 
+from components.courses.course_view_component import CourseViewComponent
 from pages.courses.courses_list_page import CoursesListPage
 from pages.courses.create_course_page import CreateCoursePage
 from pages.dashboards.dashboard_page import DashboardPage

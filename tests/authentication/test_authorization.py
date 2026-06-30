@@ -17,7 +17,8 @@ class TestAuthorization:
         ]
     )
     def test_successful_authorization(
-            self,registration_page: RegistrationPage,
+            self,
+            registration_page: RegistrationPage,
             dashboard_page: DashboardPage,
             login_page: LoginPage,
             email,
