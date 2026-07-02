@@ -1,14 +1,31 @@
 from operator import index
 from time import sleep
 
+import allure
 import pytest
 from pages.courses.courses_list_page import CoursesListPage
 from pages.courses.create_course_page import CreateCoursePage
+from tools.allure.epics import AllureEpic
+from tools.allure.features import AllureFeature
+from tools.allure.severity import Severity
+from tools.allure.stories import AllureStory
+from tools.allure.tags import AllureTag
+
+
 @pytest.mark.ui
 @pytest.mark.courses
 @pytest.mark.regression
+@allure.tag(AllureTag.REGRESSION, AllureTag.COURSES)
+@allure.epic(AllureEpic.LMS)
+@allure.feature(AllureFeature.COURSES)
+@allure.story(AllureStory.COURSES)
+@allure.parent_suite(AllureEpic.LMS)
+@allure.suite(AllureFeature.COURSES)
+@allure.sub_suite(AllureStory.COURSES)
 class TestCourses:
 
+    @allure.title('Check displaying of empty courses list ')
+    @allure.severity(Severity.NORMAL)
     def test_empty_courses_list(self, courses_list_page: CoursesListPage):
         courses_list_page.visit("https://nikita-filonov.github.io/qa-automation-engineer-ui-course/#/courses")
 
@@ -25,6 +42,8 @@ class TestCourses:
             ("Playwright Advanced", "4 weeks", "Advanced Playwright course", "100", "40"),
         ]
     )
+    @allure.title('Check create course page')
+    @allure.severity(Severity.CRITICAL)
     def test_create_course(self, courses_list_page: CoursesListPage, create_course_page: CreateCoursePage, title,
                            estimated_time, description, max_score, min_score):
         create_course_page.visit("https://nikita-filonov.github.io/qa-automation-engineer-ui-course/#/courses/create")
@@ -60,6 +79,9 @@ class TestCourses:
             ("Playwright Basics", "2 weeks", "Introduction to Playwright", "100", "10", "Playwright Advanced", "4 weeks", "Advanced Playwright course", "100", "40"),
         ]
     )
+
+    @allure.title('Check update (edit) course page')
+    @allure.severity(Severity.CRITICAL)
     def test_edit_course(
             self,
             courses_list_page: CoursesListPage,
