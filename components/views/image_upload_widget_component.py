@@ -1,3 +1,4 @@
+import allure
 from playwright.sync_api import Page, expect
 
 from components.base_component import BaseComponent
@@ -67,6 +68,7 @@ class ImageUploadWidgetComponent(BaseComponent):
     def click_remove_image_button(self):
         self.remove_button.click()
 
+    @allure.step('Upload preview image for file: "{file}"')
     def upload_preview_image(self, file: str):
         self.upload_input.set_input_files(file)
 
