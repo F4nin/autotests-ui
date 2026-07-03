@@ -57,4 +57,3 @@ class TestCircle:
     def test_area(self, radius, expected_diameter, expected_area):
         circle = Circle(radius)
         assert circle.area == expected_area
-
