@@ -45,50 +45,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
       - name: Download Allure results
         uses: actions/download-artifact@v4
         with:
           name: allure-results
           path: allure-results
 
-      - name: Debug: show allure-results content
+      - name: Generates Allure Report with history
+        uses: simple-elf/allure-report-action@v1.7
         if: always()
-        run: |
-          echo "=== Files in allure-results ==="
-          ls -la allure-results/ || echo "Directory is empty or missing"
-          echo "=== File count ==="
-          find allure-results -type f | wc -l
-
-      - name: Install Allure CLI
-        if: always()
-        run: |
-          wget -q https://github.com/allure-framework/allure2/releases/download/2.32.2/allure-2.32.2.tgz
-          tar -xzf allure-2.32.2.tgz
-          echo "$(pwd)/allure-2.32.2/bin" >> $GITHUB_PATH
-
-      - name: Checkout gh-pages for history
-        uses: actions/checkout@v4
-        if: always()
-        continue-on-error: true
         with:
-          ref: gh-pages
-          path: allure-report
-
-      - name: Copy history into allure-results
-        if: always()
-        continue-on-error: true
-        run: |
-          if [ -d "allure-report/history" ]; then
-            cp -r allure-report/history allure-results/
-            echo "History copied"
-          else
-            echo "No history found, first run"
-          fi
-
-      - name: Generate Allure report
-        if: always()
-        run: |
-          allure generate allure-results --clean --output allure-report
+          allure_results: allure-results
+          allure_history: allure-history
 
       - name: Deploy report to Github Pages
         if: always()
@@ -96,4 +70,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-report
+          publish_dir: allure-history
