@@ -45,12 +45,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages
-
       - name: Download Allure results
         uses: actions/download-artifact@v4
         with:
@@ -58,18 +52,20 @@ jobs:
           path: allure-results
 
       - name: Get Allure history
-        uses: actions/checkout@v4  # Опять клонируем репозиторий, чтобы получить историю отчётов
-        if: always()  # Всегда выполняем, независимо от успеха или неудачи предыдущих шагов
-        continue-on-error: true  # Если здесь возникнет ошибка, workflows всё равно продолжит выполнение
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
         with:
-          ref: gh-pages  # Указываем ветку gh-pages для получения отчётов
-          path: gh-pages  # Указываем путь для сохранения отчётов
+          ref: gh-pages
+          path: gh-pages
 
-      - name: Generates Allure Report with history
+      - name: Generate Allure Report with history
         uses: simple-elf/allure-report-action@master
         if: always()
         with:
           allure_results: allure-results
+          allure_report: allure-report
+          gh_pages: gh-pages
           allure_history: allure-history
 
       - name: Deploy report to Github Pages
