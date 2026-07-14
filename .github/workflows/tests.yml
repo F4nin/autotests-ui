@@ -40,7 +40,7 @@ jobs:
           path: gh-pages
 
       - name: Generates Allure Report with history
-        uses: simple-elf/allure-report-action@master
+        uses: simple-elf/allure-report-action@v4
         if: always()
         with:
           allure_results: allure-results
