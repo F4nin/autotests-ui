@@ -40,12 +40,12 @@ jobs:
 
       # 5. Шаг для получения истории отчётов Allure, если она существует
       - name: Get Allure history
-        uses: actions/checkout@v7  # Опять клонируем репозиторий, чтобы получить историю отчётов
-        if: always()  # Всегда выполняем, независимо от успеха или неудачи предыдущих шагов
-        continue-on-error: true  # Если здесь возникнет ошибка, workflow всё равно продолжит выполнение
+        uses: actions/checkout@v7
+        if: always()
+        continue-on-error: true
         with:
-          ref: gh-pages  # Указываем ветку gh-pages для получения отчётов
-          path: gh-pages  # Указываем путь для сохранения отчётов
+          ref: gh-pages
+          path: gh-pages-history
 
       # 6. Установка Allure CLI и генерация отчёта
       - name: Install Allure CLI
@@ -55,24 +55,45 @@ jobs:
           tar -xzf allure-2.32.2.tgz
           echo "$(pwd)/allure-2.32.2/bin" >> $GITHUB_PATH
 
+      - name: Create executor.json for Allure
+        if: always()
+        run: |
+          cat > allure-results/executor.json << 'EOF'
+          {
+            "name": "GitHub Actions",
+            "type": "github",
+            "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "buildOrder": ${{ github.run_number }},
+            "buildName": "${{ github.workflow }} #${{ github.run_number }}",
+            "buildUrl": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "reportName": "UI Tests Report",
+            "reportUrl": "https://f4nin.github.io/autotests-ui/${{ github.run_number }}/"
+          }
+          EOF
+
       - name: Copy history from previous runs
         if: always()
         continue-on-error: true
         run: |
-          if [ -d "gh-pages/history" ]; then
-            cp -r gh-pages/history allure-results/
+          if [ -d "gh-pages-history/history" ]; then
+            cp -r gh-pages-history/history allure-results/
             echo "History copied"
           else
             echo "No history found (first run)"
           fi
 
-      - name: Generate Allure report
+      - name: Generate Allure report into numbered folder
         if: always()
         run: |
-          allure generate allure-results --clean --output allure-report
-          echo "=== Generated report files ==="
-          ls -la allure-report/
-          echo "=== index.html exists: $([ -f allure-report/index.html ] && echo YES || echo NO) ==="
+          RUN_DIR="deploy/${{ github.run_number }}"
+          allure generate allure-results --clean --output "$RUN_DIR"
+          if [ -d "$RUN_DIR/history" ]; then
+            mkdir -p deploy/history
+            cp -r "$RUN_DIR/history"/* deploy/history/
+          fi
+          echo "=== Report generated: $RUN_DIR ==="
+          ls -la "$RUN_DIR"
+          echo "=== index.html exists: $([ -f $RUN_DIR/index.html ] && echo YES || echo NO) ==="
 
       # 7. Шаг для деплоя отчёта Allure на GitHub Pages
       - name: Deploy report to Github Pages
@@ -81,4 +102,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-report
+          publish_dir: deploy
+          keep_files: true
